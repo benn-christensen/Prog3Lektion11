@@ -86,7 +86,6 @@ public class BST<E extends Comparable<E>> {
     }
 
 
-
     /**
      * Returns true if the element is in the tree
      */
@@ -95,7 +94,6 @@ public class BST<E extends Comparable<E>> {
         NodePair pair = locateNodeAndParent(e);
         return pair.current != null;
     }
-
 
 
     /**
@@ -168,46 +166,48 @@ public class BST<E extends Comparable<E>> {
         NodePair pair = locateNodeAndParent(e);
         boolean found = true;
         if (pair.current == null) { // the element e is not in the tree
-            found = false;
-        } else {
-            TreeNode current = pair.current;
-            TreeNode parent = pair.parent; // may be null
-            // Case 1: current has no left child
-            if (current.left == null) {
-                // Connect the parent with the right child of the current node
-                if (parent == null) {
-                    root = current.right;
-                } else {
-                    if (e.compareTo(parent.element) < 0)
-                        parent.left = current.right;
-                    else
-                        parent.right = current.right;
-                }
-            } else {
-                // Case 2: The current node has a left child
-                // Locate the rightmost(biggest) node in the left subtree of
-                // the current node and also its parent
-                TreeNode parentOfRightMost = current;
-                TreeNode rightMost = current.left;
-
-                if (rightMost.right == null) { // special case: no node to the right of rightMost
-                    current.element = rightMost.element;
-                    current.left = rightMost.left;
-                } else {
-                    while (rightMost.right != null) {
-                        parentOfRightMost = rightMost;
-                        rightMost = rightMost.right; // keep going to the right
-                    }
-                    // Replace the element in current by the element in rightMost.
-                    current.element = rightMost.element;
-                    // Eliminate rightmost node.
-                    parentOfRightMost.right = rightMost.left;
-                }
-
-            }
-            size--; // Reduce the size of the tree
+            return false;
         }
-        return found; // Element deleted successfully
+        TreeNode current = pair.current;
+        TreeNode parent = pair.parent; // may be null
+        // Case 1: current has no left child
+        if (current.left == null) {
+            // Connect the parent with the right child of the current node
+            if (parent == null) {
+                root = current.right;
+            } else {
+                if (e.compareTo(parent.element) < 0)
+                    parent.left = current.right;
+                else
+                    parent.right = current.right;
+            }
+            size--;
+            return true;
+        }
+        // Case 2: The current node has a left child
+        // Locate the rightmost(biggest) node in the left subtree of
+        // the current node and also its parent
+        TreeNode parentOfRightMost = current;
+        TreeNode rightMost = current.left;
+
+        if (rightMost.right == null) { // special case: no node to the right of rightMost
+            current.element = rightMost.element;
+            current.left = rightMost.left;
+        } else {
+            while (rightMost.right != null) {
+                parentOfRightMost = rightMost;
+                rightMost = rightMost.right; // keep going to the right
+            }
+            // Replace the element in current by the element in rightMost.
+            current.element = rightMost.element;
+            // Eliminate rightmost node.
+            parentOfRightMost.right = rightMost.left;
+        }
+
+
+        size--; // Reduce the size of the tree
+
+        return true; // Element deleted successfully
     }
 
     @Override
